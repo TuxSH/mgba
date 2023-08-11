@@ -25,6 +25,7 @@ enum mGUIInput {
 	mGUI_INPUT_FAST_FORWARD_HELD,
 	mGUI_INPUT_FAST_FORWARD_TOGGLE,
 	mGUI_INPUT_MUTE_TOGGLE,
+	mGUI_INPUT_FILTER_MODE,
 };
 
 struct mGUIBackground {
@@ -90,6 +91,7 @@ struct mGUIRunner {
 	void (*paused)(struct mGUIRunner*);
 	void (*unpaused)(struct mGUIRunner*);
 	void (*incrementScreenMode)(struct mGUIRunner*);
+	void (*incrementFilterMode)(struct mGUIRunner*);
 	void (*setFrameLimiter)(struct mGUIRunner*, bool limit);
 	uint16_t (*pollGameInput)(struct mGUIRunner*);
 	bool (*running)(struct mGUIRunner*);

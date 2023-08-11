@@ -70,6 +70,7 @@ static const struct mInputPlatformInfo _mGUIKeyInfo = {
 		[mGUI_INPUT_FAST_FORWARD_HELD] = "Fast forward (held)",
 		[mGUI_INPUT_FAST_FORWARD_TOGGLE] = "Fast forward (toggle)",
 		[mGUI_INPUT_MUTE_TOGGLE] = "Mute (toggle)",
+		[mGUI_INPUT_FILTER_MODE] = "Filtering",
 	},
 	.nKeys = GUI_INPUT_MAX
 };
@@ -534,6 +535,9 @@ void mGUIRun(struct mGUIRunner* runner, const char* path) {
 			}
 			if (guiKeys & (1 << mGUI_INPUT_SCREEN_MODE) && runner->incrementScreenMode) {
 				runner->incrementScreenMode(runner);
+			}
+			if (guiKeys & (1 << mGUI_INPUT_FILTER_MODE) && runner->incrementFilterMode) {
+				runner->incrementFilterMode(runner);
 			}
 			if (guiKeys & (1 << mGUI_INPUT_SCREENSHOT)) {
 				mCoreTakeScreenshot(runner->core);
