@@ -654,6 +654,13 @@ static void _incrementScreenMode(struct mGUIRunner* runner) {
 	mCoreConfigSetUIntValue(&runner->config, "screenMode", screenMode);
 }
 
+static void _incrementSharpness(struct mGUIRunner* runner) {
+	UNUSED(runner);
+	filterMode = (filterMode + 1) % FM_MAX;
+	if (filterMode == FM_NEAREST) filterMode = FM_LINEAR_1x;
+	mCoreConfigSetUIntValue(&runner->config, "filterMode", filterMode);
+}
+
 static void _setFrameLimiter(struct mGUIRunner* runner, bool limit) {
 	UNUSED(runner);
 	if (frameLimiter == limit) {
@@ -891,7 +898,7 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	C3D_TexSetWrap(&upscaleBufferTex, GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
+	C3D_TexSetWrap(&upscaleBufferTex, GPU_MIRRORED_REPEAT, GPU_MIRRORED_REPEAT);
 	C3D_TexSetFilter(&upscaleBufferTex, GPU_LINEAR, GPU_LINEAR);
 
 	int i;
@@ -900,7 +907,7 @@ int main(int argc, char* argv[]) {
 			_cleanup();
 			return 1;
 		}
-		C3D_TexSetWrap(&outputTexture[i], GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
+		C3D_TexSetWrap(&outputTexture[i], GPU_MIRRORED_REPEAT, GPU_MIRRORED_REPEAT);
 		C3D_TexSetFilter(&outputTexture[i], GPU_NEAREST, GPU_NEAREST);
 		void* outputTextureEnd = (u8*)outputTexture[i].data + 256 * 256 * 2;
 
@@ -1033,6 +1040,7 @@ int main(int argc, char* argv[]) {
 		.paused = _gameUnloaded,
 		.unpaused = _gameLoaded,
 		.incrementScreenMode = _incrementScreenMode,
+		.incrementSharpness = _incrementSharpness,
 		.setFrameLimiter = _setFrameLimiter,
 		.pollGameInput = _pollGameInput,
 		.running = _running
@@ -1063,6 +1071,7 @@ int main(int argc, char* argv[]) {
 	_map3DSKey(&runner.params.keyMap, KEY_RIGHT, GUI_INPUT_RIGHT);
 	_map3DSKey(&runner.params.keyMap, KEY_CSTICK_UP, mGUI_INPUT_INCREASE_BRIGHTNESS);
 	_map3DSKey(&runner.params.keyMap, KEY_CSTICK_DOWN, mGUI_INPUT_DECREASE_BRIGHTNESS);
+	_map3DSKey(&runner.params.keyMap, KEY_ZL, mGUI_INPUT_SHARPNESS);
 
 	Result res = romfsInit();
 	bool useRomfs = false;
